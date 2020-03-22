@@ -1,9 +1,6 @@
 using ContactAPI.DataContext;
-using ContactAPI.Models;
-using ContactAPI.Models.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +37,7 @@ namespace ContactAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
