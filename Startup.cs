@@ -1,4 +1,6 @@
 using ContactAPI.DataContext;
+using ContactAPI.Models;
+using ContactAPI.Models.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +26,6 @@ namespace ContactAPI
             services.AddDbContext<ContactContext>(options => 
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            
             services.AddControllers();
         }
 
