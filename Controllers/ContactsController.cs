@@ -40,6 +40,7 @@ namespace ContactAPI.Controllers
             return contact;
         }
 
+        [HttpPost]
         public async Task<ActionResult<Contact>> PostContact(Contact contact)
         {
             _context.Contacts.Add(contact);
