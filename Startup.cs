@@ -30,7 +30,11 @@ namespace ContactAPI
             // Register Swagger generator
             services.AddSwaggerGen(c => 
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Contact API", Version = "v1"});    
+                c.SwaggerDoc("v1", new OpenApiInfo 
+                { Title = "Contact API", 
+                    Version = "v1",
+                    Description = "A simple API made with ASP.NET Core Web Appi"
+                });    
             });
         }
 
