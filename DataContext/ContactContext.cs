@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContactAPI.DataContext
 {
-    public class ContactContext : DbContext
+    public class ContactContext //: DbContext
     {
 
-        public ContactContext(DbContextOptions<ContactContext> options) : base(options)
-        {
-        }
+        //public ContactContext(DbContextOptions<ContactContext> options) : base(options)
+        //{
+        //}
 
-        public DbSet<Contact> Contacts { get; set; }
+        //public DbSet<Contact> Contacts { get; set; }
     }
 }

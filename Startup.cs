@@ -5,6 +5,7 @@ using ContactAPI.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,12 +30,9 @@ namespace ContactAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.InstallServicesInAssembly(Configuration);
-
-            services.AddDbContext<ContactContext>(options => 
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddControllers();
-
+            
             services.AddCors();
     
         }
@@ -61,8 +59,7 @@ namespace ContactAPI
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
-            app.UseAuthorization();
+               
             app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>

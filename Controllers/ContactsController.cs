@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ContactAPI.DataContext;
+using ContactAPI.Context;
 using ContactAPI.Models;
 
 namespace ContactAPI.Controllers
@@ -14,9 +14,9 @@ namespace ContactAPI.Controllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private readonly ContactContext _context;
+        private readonly Context.DataContext _context;
 
-        public ContactsController(ContactContext context)
+        public ContactsController(Context.DataContext context)
         {
             _context = context;
         }
