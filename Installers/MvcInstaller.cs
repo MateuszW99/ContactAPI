@@ -15,9 +15,8 @@ namespace ContactAPI.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = new JwtSettings();
+            var jwtSettings = new JwtSettings(configuration.GetSection("JwtToken:Secret").Value);
             //configuration.Bind(nameof(jwtSettings), jwtSettings);
-            jwtSettings.Secret = "11111111111111111111111111111111";
             services.AddSingleton(jwtSettings);
 
             services.AddScoped<IIdentityService, IdentityService>();
