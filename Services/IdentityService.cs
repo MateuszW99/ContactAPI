@@ -24,15 +24,6 @@ namespace ContactAPI.Services
             _jwtSettings = jwtSettings;
         }
 
-        public Task<AuthenticationResult> LoginAsync(string email, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<AuthenticationResult> RegisterAsync(string email, string password, string confirmPassword)
         {
@@ -41,7 +32,15 @@ namespace ContactAPI.Services
             {
                 return new AuthenticationResult
                 {
-                    ErrorMessages = new[] { "User with this email exists." }
+                    ErrorMessages = new[] { "User with this already email exists." }
+                };
+            }
+
+            if (!password.Equals(confirmPassword))
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessages = new[] { "Passwords do not match." }
                 };
             }
 
@@ -86,6 +85,57 @@ namespace ContactAPI.Services
             };
         }
 
-    
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            
+            if (user == null)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessages = new[] { "User does not exists." }
+                };
+            }
+
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!userHasValidPassword)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessages = new[] { "User login and/or password not found." }
+                };
+            }
+
+            return await GenerateAuthenticationResultForUserAsync(user);
+        }
+
+        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(IdentityUser user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.PasswordHash),
+                    new Claim("id", user.Id)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+
+            return new AuthenticationResult
+            {
+                Success = true,
+                Token = tokenHandler.WriteToken(token)
+            };
+        }
     }
 }

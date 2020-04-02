@@ -8,7 +8,5 @@ namespace ContactAPI.Services.Interfaces
         Task<AuthenticationResult> RegisterAsync(string email, string password, string confirmPassword);
 
         Task<AuthenticationResult> LoginAsync(string email, string password);
-
-        Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);
     }
 }
