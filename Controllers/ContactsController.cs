@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ContactAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using MediatR;
+using ContactAPI.Queries;
+using ContactAPI.Commands;
 
 namespace ContactAPI.Controllers
 {
@@ -12,39 +13,34 @@ namespace ContactAPI.Controllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private readonly Context.DataContext _context;
+        private readonly IMediator _mediatR;
 
-        public ContactsController(Context.DataContext context)
+        public ContactsController(IMediator mediatR)
         {
-            _context = context;
+            _mediatR = mediatR;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
+        public async Task<ActionResult> GetContacts()
         {
-            return await _context.Contacts.ToListAsync();
+            var query = new GetAllContactsQuery();
+            var result = await _mediatR.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Contact>> GetContact(int id)
+        public async Task<IActionResult> GetContact(int id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
-
-            if (contact == null)
-            {
-                return NotFound();
-            }
-
-            return contact;
+            var query = new GetContactByIdQuery(id);
+            var result = await _mediatR.Send(query);
+            return result == null ? NotFound() : (IActionResult) Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Contact>> PostContact(Contact contact)
+        public async Task<ActionResult<Contact>> PostContact([FromBody]CreateContactCommand command)
         {
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetContact", new { id = contact.ID }, contact);
+            var result = await _mediatR.Send(command);
+            return CreatedAtAction("GetContact", new { id = command.Contact.ID }, result.Contact);
         }
     }
 }
