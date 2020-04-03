@@ -2,6 +2,7 @@ using ContactAPI.DataContext;
 using ContactAPI.Instalers;
 using ContactAPI.Services;
 using ContactAPI.Settings;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +35,7 @@ namespace ContactAPI
             services.AddControllers();
             
             services.AddCors();
-    
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
